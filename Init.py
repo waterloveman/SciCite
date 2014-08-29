@@ -21,14 +21,35 @@ def Init(nodeFilePath="../Data/citeseer.content",edgeFilePath="../Data/citeseer.
             break;
         nodeID,feature,nodeLabel = processOneLine(line)
         G.add_node(nodeID,featureVec = feature,label = nodeLabel)
+    nodeFile.close()
 
     #add edge to the graph
+    nodes = G.nodes()
     while 1:
         line = edgeFile.readline()
         if not line:
             break;
         nodeID1,nodeID2 = getTwoNode(line)
-        G.add_edge(nodeID1,nodeID2)
+        if nodeID1 in nodes and nodeID2 in nodes:
+            G.add_edge(nodeID1,nodeID2)
+    edgeFile.close()
+    
+    #travese all nodes in the graph and get the unLabeled list and trainSet list
+    unLabeled = []
+    trainSet = []
+   
+    for nodeID in nodes:
+        if G.node[nodeID]['label'] == '':
+            unLabeled.append(nodeID)
+        flag = True
+        for neighborID in G.neighbors(nodeID):
+            if G.node[neighborID]['label'] == '':
+                flag = False
+                break
+        if flag == True and G.node[nodeID]['label'] != '':
+            trainSet.append(nodeID)
+   
+    return G,unLabeled,trainSet
 
 def processOneLine(line):
     '''get a input string line from the data file and then split it into id, feature, label
