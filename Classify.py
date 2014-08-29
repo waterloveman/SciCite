@@ -1,5 +1,7 @@
 #This file contains the function related to build and use a classifer
 
+import numpy as np
+from sklearn.svm import SVC
 
 def GetFeatureVector(G,nodeID,labelList,flag):
     '''
@@ -57,3 +59,43 @@ def GetFeatureVector(G,nodeID,labelList,flag):
         reval = reval + neighborPart
 
     return reval
+
+def TrainClassifier(X,y):
+    '''
+    given input data X and label y, train the classifier
+    return : the trained classifier object
+    '''
+    clf = SVC() # you can put any classifier you want here
+    clf.fit(X,y)
+    return clf
+
+def GetInputMatrixForClassifier(G,nodeList,labelList,flag):
+    '''
+    Given a graph and a node list, data feature flag, generate a input matrix for the classifier
+
+    return:
+    an array of input feature vectors
+    '''
+
+    tempList = []
+    for node in nodeList:
+        featureVec = GetFeatureVector(G,node,labelList,flag)
+        tempList.append(featureVec)
+
+    return np.array(tempList)
+
+def GetInputLabelForClassifier(G,nodeList,labelList):
+    '''
+    Given a list of label, output the relative number of this label
+    return:
+    an array of input data label
+    '''
+    
+    tempList = []
+    for nodeID in nodeList:
+        label = G.node[nodeID]['label']
+        tempList.append(labelList.index(label))
+
+    return np.array(tempList)
+
+
