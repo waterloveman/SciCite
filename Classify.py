@@ -38,6 +38,8 @@ def GetFeatureVector(G,nodeID,labelList,flag):
         #count neighbor label
         for neighbor in G.neighbors(nodeID):
             label = G.node[neighbor]['label']
+            if label == "":
+                continue
             index = labelList.index(label);
             neighborPart[index] = neighborPart[index] + 1;
 
